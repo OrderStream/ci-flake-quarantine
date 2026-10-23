@@ -153,3 +153,12 @@ def test_flake_quarantine_failure_interception(tmp_path):
     assert "tests/test_net.py::test_timeout" in res["flaky_tests_detected"]
     assert registry.is_quarantined("tests/test_net.py::test_timeout")
 
+
+def test_cli_execution():
+    from ci_flake_quarantine.cli import main
+    with pytest.raises(SystemExit) as exc_info:
+        main(["--help"])
+    assert exc_info.value.code == 0
+
+    exit_lic = main(["license"])
+    assert exit_lic == 0
