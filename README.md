@@ -1,8 +1,10 @@
 # ci-flake-quarantine 🛡️
 
+[![PyPI](https://img.shields.io/pypi/v/orderstream-ci-flake-quarantine.svg)](https://pypi.org/project/orderstream-ci-flake-quarantine/)
+[![GitHub Action](https://img.shields.io/badge/GitHub%20Action-v1.0.0-orange?logo=githubactions)](https://github.com/OrderStream/ci-flake-quarantine)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![CI](https://img.shields.io/badge/CI-Passing-brightgreen.svg)]()
-[![OrderStream Polar](https://img.shields.io/badge/Polar-OrderStream-blue.svg)](https://polar.sh/orderstream)
+[![OrderStream Polar](https://img.shields.io/badge/Polar-OrderStream-blue.svg)](https://polar.sh/OrderStream)
 [![Stellar XLM/USDC](https://img.shields.io/badge/Stellar-USDC%2FXLM-black.svg)](#direct-web3-wallet-monetization)
 [![Base USDC](https://img.shields.io/badge/Base-USDC-0052FF.svg)](#direct-web3-wallet-monetization)
 
