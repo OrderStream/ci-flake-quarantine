@@ -113,8 +113,8 @@ class FlakeInterceptor:
         jest_matches = re.findall(r"●\s+(.*?)\n", output)
         failed.extend([m.strip() for m in jest_matches if m.strip()])
 
-        # generic python unittest FAIL: test_name (module.TestCase)
-        unittest_matches = re.findall(r"FAIL:\s+([^\s]+)\s+\((.*?)\)", output)
+        # generic python unittest FAIL / ERROR: test_name (module.TestCase)
+        unittest_matches = re.findall(r"(?:FAIL|ERROR):\s+([^\s]+)\s+\((.*?)\)", output)
         for name, cls in unittest_matches:
             failed.append(f"{cls}.{name}")
 
@@ -188,7 +188,12 @@ class FlakeInterceptor:
             passed_retry = False
             for retry in range(1, max_retries + 1):
                 # Try retrying test directly or in sandbox
-                retry_cmd = f"{cmd} -k {test_id.split('::')[-1]}" if "pytest" in cmd else cmd
+                if "pytest" in cmd and "::" in test_id:
+                    retry_cmd = f'{cmd} "{test_id}"'
+                elif "pytest" in cmd:
+                    retry_cmd = f'{cmd} -k "{test_id.split("::")[-1]}"'
+                else:
+                    retry_cmd = cmd
                 ret_code, ret_out = cls.run_command(retry_cmd, env=sandbox_env, cwd=cwd)
                 if ret_code == 0:
                     passed_retry = True

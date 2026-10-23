@@ -20,7 +20,7 @@ def main(argv=None):
     run_parser.add_argument("--cmd", required=True, help="Test command to run (e.g. 'pytest' or 'npm test')")
     run_parser.add_argument("--quarantine-file", default=".flake-quarantine.json", help="Path to quarantine database")
     run_parser.add_argument("--max-retries", type=int, default=2, help="Number of sandboxed retries")
-    run_parser.add_argument("--freeze-clock", action="store_true", default=True, help="Enable deterministic clock freeze")
+    run_parser.add_argument("--freeze-clock", action=argparse.BooleanOptionalAction, default=True, help="Enable deterministic clock freeze")
     run_parser.add_argument("--fail-on-quarantine", action="store_true", default=False, help="Fail CI even if tests quarantined")
     run_parser.add_argument("--license-key", default=None, help="OrderStream license key")
 

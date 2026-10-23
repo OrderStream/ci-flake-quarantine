@@ -115,3 +115,41 @@ def test_cli_subcommands(tmp_path, monkeypatch):
     # List empty
     exit_code = main(["list", "--quarantine-file", db_file])
     assert exit_code == 0
+
+def test_extract_jest_and_unittest_failures():
+    jest_out = """
+    FAIL src/auth.test.ts
+    ● Auth > rejects invalid bearer token
+    ● Auth > times out on stale nonce
+    """
+    failed = FlakeInterceptor.extract_failed_tests(jest_out)
+    assert "Auth > rejects invalid bearer token" in failed
+    assert "Auth > times out on stale nonce" in failed
+
+    unittest_out = """
+    ERROR: test_db_pool (test_core.DatabaseTests)
+    FAIL: test_race_condition (test_core.AsyncTests)
+    """
+    failed_unit = FlakeInterceptor.extract_failed_tests(unittest_out)
+    assert "test_core.DatabaseTests.test_db_pool" in failed_unit
+    assert "test_core.AsyncTests.test_race_condition" in failed_unit
+
+def test_flake_quarantine_failure_interception(tmp_path):
+    q_file = tmp_path / "flaky_run.json"
+    registry = QuarantineRegistry(str(q_file))
+
+    # Simulate command that fails with a pytest failure line
+    fail_script = tmp_path / "fake_fail.py"
+    fail_script.write_text("import sys; print('FAILED tests/test_net.py::test_timeout'); sys.exit(1)", encoding="utf-8")
+
+    res = FlakeInterceptor.execute_with_quarantine(
+        cmd=f'python "{fail_script}"',
+        registry=registry,
+        quarantine_passes_ci=True
+    )
+    # Since quarantine_passes_ci is True, exit code is 0 (saved matrix rebuild)
+    assert res["exit_code"] == 0
+    assert res["quarantine_applied"] is True
+    assert "tests/test_net.py::test_timeout" in res["flaky_tests_detected"]
+    assert registry.is_quarantined("tests/test_net.py::test_timeout")
+
