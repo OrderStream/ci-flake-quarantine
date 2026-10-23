@@ -1,0 +1,56 @@
+name: "CI Flake Quarantine"
+description: "Intercept flaky test failures, isolate with deterministic clock sandboxing, and prevent matrix rebuilds"
+branding:
+  icon: "shield"
+  color: "yellow"
+inputs:
+  command:
+    description: "Test execution command to wrap (e.g. 'pytest' or 'npm test')"
+    required: true
+  quarantine_file:
+    description: "Path to flake quarantine database"
+    required: false
+    default: ".flake-quarantine.json"
+  max_retries:
+    description: "Maximum deterministic sandboxed retries"
+    required: false
+    default: "2"
+  fail_on_quarantine:
+    description: "Whether to fail CI when a flaky test is quarantined (default false)"
+    required: false
+    default: "false"
+  license_key:
+    description: "OrderStream Pro/Enterprise license key (optional)"
+    required: false
+    default: ""
+outputs:
+  quarantined_count:
+    description: "Number of flaky tests quarantined in this run"
+    value: ${{ steps.quarantine.outputs.quarantined_count }}
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Install ci-flake-quarantine
+      shell: bash
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e ${{ github.action_path }}
+    - name: Run Test Suite under Quarantine Gate
+      id: quarantine
+      shell: bash
+      env:
+        ORDERSTREAM_LICENSE_KEY: ${{ inputs.license_key }}
+      run: |
+        FAIL_FLAG=""
+        if [ "${{ inputs.fail_on_quarantine }}" = "true" ]; then
+          FAIL_FLAG="--fail-on-quarantine"
+        fi
+        ci-flake-quarantine run \
+          --cmd "${{ inputs.command }}" \
+          --quarantine-file "${{ inputs.quarantine_file }}" \
+          --max-retries ${{ inputs.max_retries }} \
+          $FAIL_FLAG

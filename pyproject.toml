@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ci-flake-quarantine"
+version = "1.0.0"
+description = "Automated test-runner wrapper and GitHub Action that intercepts flaky test failures in CI, isolates them with deterministic clock sandboxing, and prevents costly matrix rebuilds."
+readme = "README.md"
+requires-python = ">=3.9"
+authors = [{ name = "OrderStream", email = "orderstream@users.noreply.github.com" }]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Testing",
+    "Topic :: Software Development :: Quality Assurance",
+]
+dependencies = []
+
+[project.scripts]
+ci-flake-quarantine = "ci_flake_quarantine.cli:main"
