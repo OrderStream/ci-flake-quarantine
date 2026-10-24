@@ -8,7 +8,7 @@ version = "1.0.0"
 description = "Automated test-runner wrapper and GitHub Action that intercepts flaky test failures in CI, isolates them with deterministic clock sandboxing, and prevents costly matrix rebuilds."
 readme = "README.md"
 requires-python = ">=3.9"
-authors = [{ name = "OrderStream", email = "hashdecode77@gmail.com" }]
+authors = [{ name = "OrderStream", email = "healthdecoded77@gmail.com" }]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
